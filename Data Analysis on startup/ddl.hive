@@ -1,0 +1,32 @@
+--drop table created using LazySimpleSerDe if exists
+drop table if exists startupstest;
+
+--create table using LazySimpleSerDe
+create table startupstest (
+	Incubation_Center string,
+	Name_of_startup string,
+	Location_of_company string,
+	Sector string
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe'
+WITH SERDEPROPERTIES (
+    "field.delim" = ","
+)
+TBLPROPERTIES ('skip.header.line.count'='1');
+
+!echo "Created table startupstest using LazySimpleSerDe";
+
+--drop table created using OpenCSVSerDe if exists
+drop table if exists startups;
+
+--create table using OpenCSVSerDe
+create table startups (
+	Incubation_Center string,
+	Name_of_startup string,
+	Location_of_company string,
+	Sector string
+)
+ROW FORMAT SERDE 'org.apache.hadoop.hive.serde2.OpenCSVSerde'
+TBLPROPERTIES ('skip.header.line.count'='1');
+
+!echo "Created table startups using OpenCSVSerde";
