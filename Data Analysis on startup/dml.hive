@@ -1,0 +1,53 @@
+--load startup data into table created using LazySimpleSerDe
+LOAD DATA LOCAL INPATH 'Listofstartups.csv' INTO TABLE startupstest;
+
+!echo "Data loaded in startupstest";
+
+--load startup data into table created using OpenCSVSerDe
+LOAD DATA LOCAL INPATH 'Listofstartups.csv' INTO TABLE startups;
+
+!echo "Data loaded in startups";
+
+!echo "execution on table created using LazySimpleSerDe";
+!echo "sector that has most startups";
+
+select sector, COUNT(*) as count
+from startupstest
+group by sector
+order by count desc
+limit 1;
+
+!echo "Fields containing commas within quotes break the parsing since LazySimpleSerDe does not support quoted field delimiters. As a result, the data is not distributed correctly across columns, leading to incorrect query results.";
+
+!echo "execution on table created using OpenCSVSerDe";
+!echo "sector that has the most startups";
+
+select sector, COUNT(*) as count
+from startups
+group by sector
+order by count desc
+limit 1;
+
+
+!echo "State that has the max number of startups";
+
+select coalesce(trim(split(location_of_company,',')[1]),location_of_company), count(*) as count
+from startups
+group by coalesce(trim(split(location_of_company,',')[1]),location_of_company)
+order by count desc
+limit 1;
+
+
+!echo "total no of startups from Maharashtra";
+
+select count(*) as count
+from startups
+where location_of_company RLIKE "Maharashtra";
+
+
+!echo "total no of startups formed in Healthcare";
+
+select count(*) as count
+from startups
+where sector RLIKE "Healthcare";
+
